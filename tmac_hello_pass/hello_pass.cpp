@@ -1,6 +1,6 @@
 #include "llvm/Pass.h"
-#include "llvm/IR/Function.h"
 #include "llvm/IR/Module.h"
+#include "llvm/IR/IntrinsicInst.h"
 #include "llvm/Support/raw_ostream.h"
 
 using namespace llvm;
@@ -36,6 +36,21 @@ namespace {
 		for (Function &f : m.getFunctionList()) {
 			for (BasicBlock &b : f.getBasicBlockList()) {
 				for (Instruction &inst : b.getInstList()) {
+
+					//errs() << "[tmac] skip the inline asm (inserted by myself\n";
+					//continue;
+
+					if (auto *ci = dyn_cast<CallInst>(&inst)) {
+						errs() << "[tmac] A call instruction (ci) to func ";
+						errs().write_escaped(ci->getCalledFunction()->getName())
+							<< "\n";
+					}
+
+
+					if (strstr(inst.getOpcodeName(), "call")) {
+						errs() << "[tmac] Find a call instruction\n";
+					}
+
 					errs() << "Inst-" << inst_cnt++
 						<< " ";
 					errs().write_escaped(inst.getOpcodeName())

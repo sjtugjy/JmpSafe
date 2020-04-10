@@ -17,3 +17,6 @@ default:
 
 clean:
 	rm -f *.bc app.s
+
+# Use our pass
+# opt -load build/tmac_hello_pass/libjmpsafe.so -Jmpsafe < app.bc > /dev/null

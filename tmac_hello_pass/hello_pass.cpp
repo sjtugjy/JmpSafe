@@ -40,12 +40,10 @@ namespace {
 					//errs() << "[tmac] skip the inline asm (inserted by myself\n";
 					//continue;
 
-					if (auto *ci = dyn_cast<CallInst>(&inst)) {
-						errs() << "[tmac] A call instruction (ci) to func ";
-						errs().write_escaped(ci->getCalledFunction()->getName())
-							<< "\n";
-					}
-
+					// if (auto *ci = dyn_cast<CallInst>(&inst)) {
+						// errs() << "[tmac] A call instruction (ci) to func ";
+						// errs().write_escaped(ci->getCalledFunction()->getName()) << "\n";
+					// }
 
 					if (strstr(inst.getOpcodeName(), "call")) {
 						errs() << "[tmac] Find a call instruction\n";

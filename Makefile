@@ -13,10 +13,16 @@ default:
 # llvm-dis < app.bc
 
 # Generate ASM file
-# llc app.bc -o app.s
+asm:
+	llc app.bc -o app.s
 
 clean:
-	rm -f *.bc app.s
+	rm -f *.bc app.s tmp
+
+# Compile our pass
+pass:
+	make -C build
 
 # Use our pass
-# opt -load build/tmac_hello_pass/libjmpsafe.so -Jmpsafe < app.bc > /dev/null
+run:
+	opt -load build/tmac_hello_pass/libjmpsafe.so -Jmpsafe < app.bc > /dev/null

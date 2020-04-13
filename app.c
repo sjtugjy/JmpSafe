@@ -3,7 +3,7 @@
 int bar(int n)
 {
 	// TODO: why asm nopl is treated as an indrect call instrution
-	// asm("nopl 0xf(%rax, %rax, 4)");
+	asm("nopl 0xf(%rax, %rax, 4)");
 	printf("This is bar: %d\n", n);
 	return n + 1;
 }

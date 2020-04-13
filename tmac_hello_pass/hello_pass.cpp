@@ -37,20 +37,26 @@ namespace {
 			for (BasicBlock &b : f.getBasicBlockList()) {
 				for (Instruction &inst : b.getInstList()) {
 
-					//errs() << "[tmac] skip the inline asm (inserted by myself\n";
-					//continue;
-
 					if (auto *ci = dyn_cast<CallInst>(&inst)) {
+
+						if (ci->isInlineAsm()) {
+							errs() << "[tmac] skip the inline asm.\n";
+							continue;
+						}
+
 						/* ci calls which function (cf) */
 						Function *cf;
 
 						cf = ci->getCalledFunction();
 						if (cf == NULL) {
+							/* TODO: no called function means indrect call? */
 							errs() << "[tmac] An indrect call instruction\n";
 						}
 						else {
 							errs() << "[tmac] A direct call instruction to func: ";
 							errs().write_escaped(cf->getName()) << "\n";
+
+							// TODO: insert a nopl instruction after the call instruction
 						}
 					}
 

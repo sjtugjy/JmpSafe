@@ -1,6 +1,7 @@
 #include "llvm/Pass.h"
 #include "llvm/IR/Module.h"
 #include "llvm/IR/IntrinsicInst.h"
+#include "llvm/IR/InlineAsm.h"
 #include "llvm/Support/raw_ostream.h"
 
 using namespace llvm;
@@ -32,8 +33,45 @@ namespace {
 
 	/* tmac: Run on each module (file?) */
 	bool TmacHello::runOnModule(Module &m) {
+		/*
+		   InlineAsm * InlineAsm::get(
+		   FunctionType *	Ty,
+		   StringRef	AsmString,
+		   StringRef	Constraints,
+		   bool	hasSideEffects,
+		   bool	isAlignStack = false,
+		   AsmDialect	asmDialect = AD_ATT 
+		   )	
+		   */
+
+		/*
+		 * This is the factory function for the FunctionType class.
+		 * FunctionType *FunctionType::get(Type *ReturnType, ArrayRef<Type*> Params, bool isVarArg)
+		 */
+
+		/* Instrumentation: mark each legal indirect jmp/call/ret target with a TAG */
+		InlineAsm *tagnop;
+		tagnop = InlineAsm::get(FunctionType::get(Type::getVoidTy(m.getContext()), ArrayRef<Type *>(), false),
+					"nopl 5201314(%rax, %rax, 4)\n\t",
+					"",
+					false);
+
 		/* Traverse function list in the module */
 		for (Function &f : m.getFunctionList()) {
+
+			/* Instrument-type-one: Insert the tag instruction at the entry of each function */
+						
+			// BasicBlock &entry_block = f.front();
+			BasicBlock &entry_block = f.getEntryBlock();
+			Instruction &entry_inst = entry_block.front();
+
+			/* LLVM CallInst for inline asm */
+			CallInst *callasm = CallInst::Create(tagnop, ArrayRef<Value *>());
+			if (auto *inst = dyn_cast<Instruction>(&entry_inst)) {
+				errs() << "[tag-type-1] Function entry.\n";
+				callasm->insertBefore(inst);
+			}
+
 			for (BasicBlock &b : f.getBasicBlockList()) {
 				for (Instruction &inst : b.getInstList()) {
 
@@ -56,7 +94,11 @@ namespace {
 							errs() << "[tmac] A direct call instruction to func: ";
 							errs().write_escaped(cf->getName()) << "\n";
 
-							// TODO: insert a nopl instruction after the call instruction
+							/* Instrument-type-two: Insert the tag instruction after the call instruction */
+						
+							/* LLVM CallInst for inline asm */
+							CallInst *callasm = CallInst::Create(tagnop, ArrayRef<Value *>());
+							callasm->insertAfter(ci);
 						}
 					}
 
@@ -71,7 +113,7 @@ namespace {
 				}
 			}
 		}
-		return false;
+		return true;
 	}
 }
 
@@ -80,6 +122,6 @@ namespace {
 char TmacHello::ID = 0;
 
 /* @command-line arg: TmacHello; @name: Tmac Hello World Pass */
-static RegisterPass<TmacHello> X("Jmpsafe", "Tmac: Jmpsafe Pass");
+static RegisterPass<TmacHello> X("Jmpsafe", "Tmac: Jmpsafe Pass", true, false);
 			     //false, false);
 

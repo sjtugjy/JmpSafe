@@ -18,7 +18,7 @@ asm:
 	llc new.bc -o new.s
 
 clean:
-	rm -f *.bc app.s tmp
+	rm -f *.bc *.s tmp rewrite
 
 # Compile our pass
 pass:

@@ -5,8 +5,8 @@
 
 # Generate IR (bitcode)
 ir:
-	clang -O0 -emit-llvm app.c -c -o app.bc
-	@#clang -O3 -emit-llvm app.c -c -o app.bc
+	@#clang -O0 -emit-llvm app.c -c -o app.bc
+	clang -O3 -emit-llvm app.c -c -o app.bc
 	@#llc app.bc -o app.s
 
 # Take a look at the LLVM assembly code
@@ -29,3 +29,6 @@ run:
 	opt -load build/tmac_hello_pass/libjmpsafe.so -Jmpsafe < app.bc > new.bc
 
 all: pass ir run asm
+
+rewrite: instrument.cpp
+	g++ -std=c++11 $< -o $@

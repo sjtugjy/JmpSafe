@@ -20,15 +20,38 @@ void foo(int n)
 	case 100:
 		printf("Perfect!\n");
 		break;
+	case 101:
+		printf("%d\n", __LINE__);
+		break;
+	case 102:
+		printf("%d\n", __LINE__);
+		break;
+	case 103:
+		printf("%d\n", __LINE__);
+		break;
+	case 109:
+		printf("%d\n", __LINE__);
+		break;
+	case 210:
+		printf("%d\n", __LINE__);
+		break;
 	default:
 		printf("Not bad!\n");
 		break;
 	}
 }
 
+void __attribute__((noinline)) baz(int n)
+{
+	printf("I am baz\n");
+}
+
 int main()
 {
+	void (*fp)(int) = &baz;
+
 	printf("Hello LLVM\n");
 	foo(99);
+	fp(0);
 	return 0;
 }

@@ -104,7 +104,7 @@ int main(int argc, char **argv)
 			int find = 0;
 
 			/* for cases like jmp %rxx */
-			if (regex_match (code, regex("(jmp)(( |\\t)+)(r|R)(.*)"))) {
+			if (regex_match (code, regex("(jmp)(( |\\t)+)(%)(r|R)(.*)"))) {
 				find = 1;
 			}
 
